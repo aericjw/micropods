@@ -1,5 +1,7 @@
 import { Button } from 'pod_ui/Button';
-import useData from 'pod_server/hooks/useData';
+import PokeInput from './components/pokeInput/PokeInput.tsx';
+
+const dtrum = window?.dtrum;
 
 const {
   translations: { useTranslation },
@@ -7,7 +9,6 @@ const {
 
 const App = () => {
   const { t } = useTranslation();
-  const { data } = useData();
 
   const sendEvent = () => {
     window.dispatchEvent(
@@ -41,13 +42,9 @@ const App = () => {
         <h3 className="text-xl font-semibold">Integration with pod_server</h3>
 
         <h6 className="text-sm font-semibold mt-4">Data from pod_server</h6>
-
-        <div className="bg-orange-400 mt-4 p-4 flex flex-col gap-4 rounded-lg">
-          {data && JSON.stringify(data)}
-        </div>
+        <PokeInput />
       </section>
     </div>
   );
 };
-
 export default App;

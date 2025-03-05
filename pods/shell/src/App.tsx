@@ -69,6 +69,32 @@ const Legend = () => {
   );
 };
 
+const dtrum = window?.dtrum;
+const dynatrace = window?.dynatrace;
+
+const setEnterAction = (module: Module) => {
+  // console.log(`moduleName: ${module.moduleName}`);
+  // const id = dtrum?.enterAction(`Navigate to ${module.moduleName}`);
+  // const actionProperties = {
+  //   scope: module.moduleName,
+  //   moduleName: 'root',
+  // };
+  // dtrum.addActionProperties(id, {}, {}, actionProperties);
+
+  // dtrum.leaveAction(id);
+  dynatrace.addEventModifier(function (event) {
+    if (event['event.type'] !== 'click') {
+      return event;
+    }
+    return {
+      ...event,
+      'event_properties.prop': `${module.moduleName}`,
+      'url.full': 'test.com',
+      'view.instance': '123456789',
+    };
+  });
+};
+
 const Header = () => {
   const {
     translations: { changeLanguage },
@@ -79,13 +105,17 @@ const Header = () => {
       <div className="w-1/2 flex gap-4 bg-rose-400 text-white rounded-lg p-2 justify-center">
         {MODULES.map((module) =>
           module.path ? (
-            <Link key={module.name} to={module.path}>
+            <Link
+              key={module.name}
+              to={module.path}
+              onClick={() => setEnterAction(module)}
+            >
               {module.name}
             </Link>
           ) : null,
         )}
 
-        <div className="flex bg-white rounded-full gap-4 px-2">
+        <div className="flex rounded-full gap-4 px-2">
           <div className="cursor-pointer" onClick={() => changeLanguage('en')}>
             🇺🇸
           </div>

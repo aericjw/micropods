@@ -1,5 +1,6 @@
 import { Button } from './components/button/Button';
 import { Skeleton } from './components/skeleton/Skeleton';
+import PokeInput from 'pod_dashboard/PokeInput';
 
 const App = () => {
   return (
@@ -15,7 +16,7 @@ const App = () => {
 
         <div className="flex flex-col gap-4">
           <Button>Hello from shacdn</Button>
-
+          <PokeInput />
           <div className="flex items-center space-x-4">
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="space-y-2">

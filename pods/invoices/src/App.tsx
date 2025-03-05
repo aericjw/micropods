@@ -1,6 +1,7 @@
 import './App.css';
 
 import { Button } from 'pod_ui/Button';
+import PokeInput from 'pod_dashboard/PokeInput';
 
 const App = () => {
   const sendEventToShell = () => {
@@ -30,6 +31,12 @@ const App = () => {
           <Button onClick={sendEventToShell}>Send an event to pod_shell</Button>
         </div>
       </section>
+      <div className="bg-teal-100 rounded-lg p-4">
+        <section>
+          <h1 className="text-2xl font-bold">This is the dashboard module</h1>
+          <PokeInput />
+        </section>
+      </div>
     </div>
   );
 };

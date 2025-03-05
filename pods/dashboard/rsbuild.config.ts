@@ -7,6 +7,7 @@ export default micropodConfig({
   exposes: {
     './App': './src/App.tsx',
     './translations': './translations.json',
+    './PokeInput': './src/components/pokeInput/PokeInput.tsx',
   },
   remotes: [{ name: 'pod_ui' }, { name: 'pod_server' }],
 });

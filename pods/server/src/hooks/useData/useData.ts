@@ -1,15 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Pokemon } from '../../common/pokemon.model';
 
-const fetchData = () => {
-  //return axios.get('https://pokeapi.co/api/v2/pokemon?limit=10&offset=0');
-  return [{ a: 'a' }];
+const fetchData = async (pokeId: string): Promise<Pokemon> => {
+  const response = await axios.get(
+    `https://pokeapi.co/api/v2/pokemon/${pokeId}/`,
+  );
+  return response.data;
 };
 
-const useData = () => {
+const useData = (pokeId: string) => {
   const { data, isPending, isError } = useQuery({
-    queryKey: ['SERVER_USE_DATA'],
-    queryFn: () => fetchData(),
+    queryKey: ['poke_data', pokeId],
+    queryFn: () => fetchData(pokeId),
   });
 
   return {
