@@ -1,13 +1,13 @@
 import { Button } from 'pod_ui/Button';
 import PokeInput from './components/pokeInput/PokeInput.tsx';
 
-const dtrum = window?.dtrum;
-
 const {
   translations: { useTranslation },
+  dynatraceShared: { useDynatraceModuleIdentifier },
 } = window.micropods;
 
 const App = () => {
+  useDynatraceModuleIdentifier(`pod-dashboard`, 'page');
   const { t } = useTranslation();
 
   const sendEvent = () => {

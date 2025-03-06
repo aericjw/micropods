@@ -3,6 +3,11 @@ import { Skeleton } from './components/skeleton/Skeleton';
 import PokeInput from 'pod_dashboard/PokeInput';
 
 const App = () => {
+  const {
+    dynatraceShared: { useDynatraceModuleIdentifier },
+  } = window.micropods;
+
+  useDynatraceModuleIdentifier(`pod-ui`, `root`);
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 gap-4 pt-4">

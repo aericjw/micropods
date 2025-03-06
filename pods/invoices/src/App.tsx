@@ -4,6 +4,11 @@ import { Button } from 'pod_ui/Button';
 import PokeInput from 'pod_dashboard/PokeInput';
 
 const App = () => {
+  const {
+    dynatraceShared: { useDynatraceModuleIdentifier },
+  } = window.micropods;
+  useDynatraceModuleIdentifier(`pod-invoices`, `root`);
+
   const sendEventToShell = () => {
     window.dispatchEvent(
       new CustomEvent('pod_shell/notification', {

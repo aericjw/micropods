@@ -2,29 +2,18 @@ import { useState } from 'react';
 import { Abilities } from '../../../constants/pokemon.model';
 import useData from 'pod_server/hooks/useData';
 
-const dtrum = window?.dtrum;
+const {
+  dynatraceShared: { useDynatraceModuleIdentifier },
+} = window.micropods;
 
 const PokeInput = () => {
+  useDynatraceModuleIdentifier(`pod-dashboard`, `pokeInput`);
   const [pokeId, setPokeId] = useState('1');
   const { data, isPending, isError } = useData(pokeId);
 
-  const setEnterAction = () => {
-    console.log(`moduleName: dashboard`);
-    const id = dtrum?.enterAction(`click on dashboard/PokenInput`);
-    const actionProperties = {
-      scope: 'dashboard',
-      modulenames: 'PokenInput',
-    };
-    dtrum.addActionProperties(id, {}, {}, actionProperties);
-  };
   return (
     <div>
-      <input
-        onChange={(e) => {
-          setPokeId(e?.target?.value);
-          setEnterAction();
-        }}
-      />
+      <input onChange={(e) => setPokeId(e?.target?.value)} />
       <div className="bg-orange-400 mt-4 p-4 flex flex-col gap-4 rounded-lg">
         {isPending && <p>Loading...</p>}
         {isError && <p>Error fetching data</p>}
