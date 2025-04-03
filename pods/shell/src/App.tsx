@@ -188,6 +188,50 @@ const routes = [
 
 const router = createBrowserRouter(routes);
 
+// check if RUM on Grail is enabled for app
+if(window.dynatrace){
+  // event modifier add contextual attributes to OOTB and custom events that Dynatrace detects
+  // event represents the Dynatrace Event created
+  // context represents the JavaScript Event that triggered the Dynatrace Event
+  dynatrace.addEventModifier(function (event:any, context:any) {
+    // check that context exists, that it's related to performance resource timing, and isn't requests for favicon
+    if(context && context instanceof PerformanceResourceTiming && !context.name?.includes("favicon")){
+
+      // extract microfrontend name from event
+      const regex = /localhost:\d+/;
+      const match = context.name.match(regex);
+
+      // IGNORE - I'm only doing this so my demo data isn't "localhost:3000", but more represents the actual MFE
+      // For Autodesk, the component name is already in the URL and this step is not necessary
+      let mfe = "";
+      const domainMapping: Object = {
+        "localhost:3000": "exoskeleton",
+        "localhost:3001": "pod_ui",
+        "localhost:3002": "pod_dashboard",
+        "localhost:3003": "pod_server",
+        "localhost:3004": "pod_invoices",
+        "localhost:8000": "exoskeleton",
+        "localhost:8001": "pod_ui",
+        "localhost:8002": "pod_dashboard",
+        "localhost:8003": "pod_server",
+        "localhost:8004": "pod_invoices"
+      }
+      for (const [domain, name] of Object.entries(domainMapping)){
+        if (domain == match[0]){
+          mfe = name
+        }
+      }
+      // END IGNORE
+
+      // add an additional property so we can slice, filter, alert, etc. by microfrontend
+      return {
+        ...event,
+        "event_properties.microfrontend": mfe,
+      }
+    }
+  });
+}
+
 const App = () => (
   <ErrorBoundary fallback={<p>Something went wrong</p>}>
     <ServerProvider>
