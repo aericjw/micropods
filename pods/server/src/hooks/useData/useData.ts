@@ -10,7 +10,7 @@ const fetchData = async (pokeId: string): Promise<Pokemon> => {
 };
 
 const useData = (pokeId: string) => {
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isFetched, isError, error } = useQuery({
     queryKey: ['poke_data', pokeId],
     queryFn: () => fetchData(pokeId),
   });
@@ -18,7 +18,9 @@ const useData = (pokeId: string) => {
   return {
     data,
     isPending,
+    isFetched,
     isError,
+    error,
   };
 };
 

@@ -3,11 +3,20 @@ import PokeInput from './components/pokeInput/PokeInput.tsx';
 
 const {
   translations: { useTranslation },
-  dynatraceShared: { useDynatraceModuleIdentifier },
+  dynatraceShared: {
+    useDynatraceSendErrorEvent,
+    useDynatraceAddEventModifier,
+    useDynatraceSendEvent,
+  },
 } = window.micropods;
 
+const generateError = () => {
+  useDynatraceAddEventModifier(`Dashboard`, './App');
+  throw new Error('This is a custom Dashboard Error');
+};
+
 const App = () => {
-  useDynatraceModuleIdentifier(`pod-dashboard`, 'page');
+  useDynatraceAddEventModifier(`Dashboard`, './App');
   const { t } = useTranslation();
 
   const sendEvent = () => {
@@ -19,11 +28,22 @@ const App = () => {
         },
       }),
     );
+    // Send Custom Timed Event (dynatrace.sendEvent)
+    useDynatraceSendEvent('Exoskeleton', './Button', 9999);
   };
 
+  const handleClick = () => {
+    try {
+      generateError();
+    } catch (error) {
+      // Send Custom Error Event (dynatrace.sendEvent)
+      useDynatraceSendErrorEvent(`Dashboard`, './App', error);
+    }
+  };
   return (
     <div className="bg-teal-100 rounded-lg p-4">
       <section>
+        <p>Dashboard/App</p>
         <h1 className="text-2xl font-bold">This is the dashboard module</h1>
         <h3>{t('pod_dashboard:welcomeMessage')}</h3>
       </section>
@@ -37,7 +57,12 @@ const App = () => {
           <Button onClick={sendEvent}>Send an event to pod_shell</Button>
         </div>
       </section>
-
+      <section>
+        <div className="bg-green-100 mt-4 p-4 flex flex-col gap-4 rounded-lg">
+          <h6 className="text-sm font-semibold">dashboard/App</h6>
+          <Button onClick={handleClick}>Generate Error</Button>
+        </div>
+      </section>
       <section className="mt-4">
         <h3 className="text-xl font-semibold">Integration with pod_server</h3>
 

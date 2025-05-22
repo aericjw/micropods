@@ -2,12 +2,38 @@ import './App.css';
 
 import { Button } from 'pod_ui/Button';
 import PokeInput from 'pod_dashboard/PokeInput';
+import React, { useEffect, useState } from 'react';
 
 const App = () => {
   const {
-    dynatraceShared: { useDynatraceModuleIdentifier },
+    dynatraceShared: { useDynatraceAddEventModifier, useDynatraceSendEvent },
   } = window.micropods;
-  useDynatraceModuleIdentifier(`pod-invoices`, `root`);
+
+  const [sprites, setSprites] = useState([]);
+
+  useEffect(() => {
+    const fetchSprites = async () => {
+      const spriteData = [];
+      for (let i = 1; i <= 15; i++) {
+        try {
+          const response = await fetch(`https://pokeapi.co/api/v2/item/${i}/`);
+          const data = await response.json();
+          spriteData.push({
+            id: i,
+            name: data.name,
+            image: data.sprites.default,
+          });
+        } catch (error) {
+          console.error(`Error fetching item ${i}:`, error);
+        }
+      }
+      setSprites(spriteData);
+    };
+
+    fetchSprites();
+  }, []);
+
+  useDynatraceAddEventModifier(`Invoices`, `./App`);
 
   const sendEventToShell = () => {
     window.dispatchEvent(
@@ -20,12 +46,35 @@ const App = () => {
         },
       }),
     );
+
+    useDynatraceSendEvent('Exoskeleton', './Button', 9999);
   };
 
   return (
     <div className="bg-violet-100 rounded-lg p-4">
       <section>
         <h1 className="text-2xl font-bold">This is the invoices module</h1>
+        <div className="container mt-4">
+          <div className="flex">
+            {sprites.map((item) => (
+              <div
+                key={item.id}
+                className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4 text-center"
+              >
+                <div className="card h-100">
+                  <img
+                    src={item.image}
+                    className="card-img-top p-3"
+                    alt={item.name}
+                  />
+                  <div className="card-body p-2">
+                    <p className="card-text text-capitalize">{item.name}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="mt-4">

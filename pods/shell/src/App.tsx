@@ -72,9 +72,19 @@ const Legend = () => {
 const Header = () => {
   const {
     translations: { changeLanguage },
-    dynatraceShared: { useDynatraceModuleIdentifier },
+    dynatraceShared: { useDynatraceAddEventModifier },
   } = window.micropods;
-  useDynatraceModuleIdentifier(`pod-shell`, `root`);
+  useDynatraceAddEventModifier(`ExoSkeleton`, `./App`);
+  // let object = { page: 4, key: 'value' };
+  // if (window?.dynatrace) {
+  //   dynatrace.addEventModifier((event, context) => {
+  //     return {
+  //       ...event,
+  //       'event_properties.scope': `pod-shell`,
+  //       'event_properties.moduleName': `root-shell`,
+  //     };
+  //   });
+  // }
 
   return (
     <header className="w-full flex justify-center items-center pt-4 mb-4">
@@ -116,7 +126,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div className="container h-screen bg-rose-100">
+    <div className="container max-h-full bg-rose-100 p-4">
       <Header />
 
       {children}
@@ -128,7 +138,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
 const RootLayout = () => <Outlet />;
 
+const generateError = () => {
+  throw new Error('This is a custom ExoSkeleton Error');
+};
+
 const Homepage = () => {
+  const {
+    dynatraceShared: { useDynatraceAddEventModifier },
+  } = window.micropods;
+
+  const handleClick = () => {
+    try {
+      generateError();
+    } catch (error) {
+      console.error('Caught error:', error.message);
+      useDynatraceAddEventModifier('ExoSkeleton', './App');
+    }
+  };
+
   return (
     <div>
       <section>
@@ -145,6 +172,12 @@ const Homepage = () => {
           <Skeleton className="w-24 h-4 rounded-full bg-green-400" />
           <Skeleton className="w-48 h-4 rounded-full bg-green-400" />
           <Skeleton className="w-72 h-4 rounded-full bg-green-400" />
+        </div>
+      </section>
+      <section>
+        <div className="bg-green-100 mt-4 p-4 flex flex-col gap-4 rounded-lg">
+          <h6 className="text-sm font-semibold">ExoSkeleton/App</h6>
+          <Button onClick={handleClick}>Generate Error</Button>
         </div>
       </section>
     </div>
@@ -190,6 +223,52 @@ const routes = [
 
 const router = createBrowserRouter(routes);
 
+// check if RUM on Grail is enabled for app
+// if (window.dynatrace) {
+//   // event modifier add contextual attributes to OOTB and custom events that Dynatrace detects
+//   // event represents the Dynatrace Event created
+//   // context represents the JavaScript Event that triggered the Dynatrace Event
+//   dynatrace.addEventModifier(function (event: any, context: any) {
+//     // check that context exists, that it's related to performance resource timing, and isn't requests for favicon
+//     if (
+//       context &&
+//       context instanceof PerformanceResourceTiming &&
+//       !context.name?.includes('favicon')
+//     ) {
+//       // extract microfrontend name from event
+//       const regex = /localhost:\d+/;
+//       const match = context.name.match(regex);
+//       console.log(match);
+//       // IGNORE - I'm only doing this so my demo data isn't "localhost:3000", but more represents the actual MFE
+//       // For Autodesk, the component name is already in the URL and this step is not necessary
+//       let mfe = '';
+//       const domainMapping: Object = {
+//         'localhost:3000': 'exoskeleton',
+//         'localhost:3001': 'pod_ui',
+//         'localhost:3002': 'pod_dashboard',
+//         'localhost:3003': 'pod_server',
+//         'localhost:3004': 'pod_invoices',
+//         'localhost:8000': 'exoskeleton',
+//         'localhost:8001': 'pod_ui',
+//         'localhost:8002': 'pod_dashboard',
+//         'localhost:8003': 'pod_server',
+//         'localhost:8004': 'pod_invoices',
+//       };
+//       for (const [domain, name] of Object.entries(domainMapping)) {
+//         if (domain == match[0]) {
+//           mfe = name;
+//         }
+//       }
+//       // END IGNORE
+
+//       // add an additional property so we can slice, filter, alert, etc. by microfrontend
+//       return {
+//         ...event,
+//         'event_properties.microfrontend': mfe,
+//       };
+//     }
+//   });
+// }
 const App = () => (
   <ErrorBoundary fallback={<p>Something went wrong</p>}>
     <ServerProvider>

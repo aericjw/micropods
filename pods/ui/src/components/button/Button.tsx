@@ -40,6 +40,19 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const {
+      dynatraceShared: { useDynatraceAddEventModifier },
+    } = window.micropods;
+    useDynatraceAddEventModifier(`UI`, `./Button`);
+    // if (window?.dynatrace) {
+    //   dynatrace.addEventModifier((event, context) => {
+    //     return {
+    //       ...event,
+    //       'event_properties.scope': `pod-ui`,
+    //       'event_properties.moduleName': `button`,
+    //     };
+    //   });
+    // }
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
